@@ -1,3 +1,5 @@
+from flask import Flask
+from flask_cors import CORS
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
