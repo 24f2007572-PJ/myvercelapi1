@@ -1,3 +1,46 @@
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+import pandas as pd
+import numpy as np
+import json
+
+app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})
+
+# Load the telemetry bundle sample
+with open("q-vercel-latency.json") as f:
+    telemetry = pd.DataFrame(json.load(f))
+
+@app.route("/api/telemetry", methods=["POST"])
+def telemetry_endpoint():
+    data = request.get_json()
+    regions = data.get("regions", [])
+    threshold = data.get("threshold_ms", 180)
+
+    response = {}
+
+    for region in regions:
+        df_region = telemetry[telemetry["region"] == region]
+        if df_region.empty:
+            response[region] = {
+                "avg_latency": None,
+                "p95_latency": None,
+                "avg_uptime": None,
+                "breaches": 0
+            }
+            continue
+
+        latencies = df_region["latency_ms"]
+        uptimes = df_region["uptime"]
+
+        response[region] = {
+            "avg_latency": latencies.mean(),
+            "p95_latency": np.percentile(latencies, 95),
+            "avg_uptime": uptimes.mean(),
+            "breaches": (latencies > threshold).sum()
+        }
+
+    return jsonify(response)
 from flask import Flask
 from flask_cors import CORS
 from fastapi import FastAPI, Request
