@@ -21,19 +21,15 @@ with open(TELEMETRY_FILE, "r") as f:
     telemetry_data = json.load(f)
 
 @app.post("/api/index")
-async def latency_metrics(request: Request):
+async def telemetry_metrics(request: Request):
     body = await request.json()
-    regions = body.get("region", [])         # e.g. ["apac", "emea"]
-    services = body.get("service", [])       # optional filter, e.g. ["checkout", "support"]
-    threshold = body.get("latency_ms", 180)  # default threshold
+    regions = body.get("regions", [])
+    threshold = body.get("threshold_ms", 180)
 
     response = {}
 
     for region in regions:
-        # Filter by region (and service if provided)
         region_data = [r for r in telemetry_data if r["region"] == region]
-        if services:
-            region_data = [r for r in region_data if r["service"] in services]
 
         if not region_data:
             response[region] = {
@@ -52,7 +48,6 @@ async def latency_metrics(request: Request):
             "p95_latency": float(np.percentile(latencies, 95)),
             "avg_uptime": float(np.mean(uptimes)),
             "breaches": int(np.sum(latencies > threshold)),
-            "samples": len(region_data),
         }
 
     return JSONResponse(response)
