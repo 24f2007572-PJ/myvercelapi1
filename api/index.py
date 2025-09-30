@@ -11,7 +11,7 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 with open("q-vercel-latency.json") as f:
     telemetry = pd.DataFrame(json.load(f))
 
-@app.route("/api/telemetry", methods=["POST"])
+@app.route("/api/index", methods=["POST"])
 def telemetry_endpoint():
     data = request.get_json()
     regions = data.get("regions", [])
