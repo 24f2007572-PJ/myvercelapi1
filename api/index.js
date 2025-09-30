@@ -13,3 +13,15 @@ export default async function handler(req, res) {
   // Example response
   res.status(200).json({ message: '✅ CORS is working!' });
 }
+
+fetch('https://myvercelapi1.vercel.app/api/index', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({ name: 'John' })
+})
+  .then(res => res.json())
+  .then(data => console.log(data))
+  .catch(err => console.error(err));
+
