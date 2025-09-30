@@ -68,8 +68,8 @@ with open(TELEMETRY_FILE, "r") as f:
 @app.post("/")
 async def latency_metrics(request: Request):
     body = await request.json()
-    regions = body.get("regions", [])
-    threshold = body.get("threshold_ms", 180)
+    regions = body.get("region", [])
+    threshold = body.get("latency_ms", 180)
 
     response = {}
     for region in regions:
