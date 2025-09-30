@@ -1,8 +1,3 @@
 fastapi
-uvicorn
-pandas
 numpy
-python-multipart
-Flask-Cors
-flask
-flask-cors
+
