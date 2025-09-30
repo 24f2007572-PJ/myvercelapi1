@@ -14,8 +14,8 @@ with open("q-vercel-latency.json") as f:
 @app.route("/api/index", methods=["POST"])
 def telemetry_endpoint():
     data = request.get_json()
-    regions = data.get("regions", [])
-    threshold = data.get("threshold_ms", 180)
+    regions = data.get("region", [])
+    threshold = data.get("latency_ms", 180)
 
     response = {}
 
